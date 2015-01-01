@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.questionnaireapp"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="21" />
+	
+    <uses-permission android:name="android.permission.INTERNET" />
+    
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        
+        <!-- android:configChanges="keyboardHidden|orientation|screenSize" =  -->
+        
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" 
+            android:configChanges="keyboardHidden|orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
+         <!-- Show splash screen page activity -->
+         
+        <activity
+            android:name="com.example.questionnaireapp.SplashScreen"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <!-- Show start screen page activity -->
+         
+        <activity
+            android:name="com.example.questionnaireapp.StartScreen"
+            android:label="@string/app_start_screen" 
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
+       <!-- Show option screen page activity -->
+         
+        <activity
+            android:name="com.example.questionnaireapp.OptionScreen"
+            android:label="@string/app_option_screen" 
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
+ 
+
+        <!-- Show result page activity
+      	to limit view to landscape use: android:screenOrientation="landscape" -->
+        <activity
+            android:name="com.example.questionnaireapp.ResultActivity"
+            android:label="@string/title_activity_result"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+             >
+        </activity>
+
+        <!-- Social network sharing activity -->
+        <activity
+            android:name="com.example.intentshare.MainActivity"
+            android:label="@string/app_name" >
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </activity>
+    </application>
+
+</manifest>

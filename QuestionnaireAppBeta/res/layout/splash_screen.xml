@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/splashLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/dark2" >
+
+    <TextView
+        android:id="@+id/splashTV"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:gravity="center_vertical"
+        android:textColor="#aaaaaa"
+        android:shadowColor="#0a0a0a"
+        android:shadowDx="20"
+        android:shadowDy="-15"
+        android:shadowRadius="20"
+        android:text="@string/splashText"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:typeface="serif"/>
+</RelativeLayout>
