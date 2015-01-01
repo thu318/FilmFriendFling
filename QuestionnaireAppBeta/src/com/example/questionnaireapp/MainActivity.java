@@ -59,7 +59,7 @@ public class MainActivity extends ActionBarActivity implements
 	private Animation animation2;
 	private Animation animation3;
 
-	// max 10 types of answers
+	// max 16 types of answers
 	private static final int max = 16;
 	RadioGroup grp;
 	RadioButton rd[] = new RadioButton[max];
@@ -67,7 +67,7 @@ public class MainActivity extends ActionBarActivity implements
 	int totalAnswers;
 
 	// variables used for separating strings in database
-	// to calculate score of each characters :
+	// to calculate score of each characters 
 	private String line;
 	private String[] lineArray;
 	private String line3;
