@@ -1,7 +1,7 @@
 film-friend-fling
 =================
 
-The app that matches you to a film/tv character you should date.
+The questionnaire app that matches you to a film/tv character you should date.
 
 
 ABOUT
