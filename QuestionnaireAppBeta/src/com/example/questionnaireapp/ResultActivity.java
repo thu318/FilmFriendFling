@@ -1,9 +1,9 @@
 package com.example.questionnaireapp;
 
 import java.util.ArrayList;
-
-import com.example.questinnaireapp.TouchImage.TouchImageView;
 //going through image gallery
+import com.example.questinnaireapp.TouchImage.TouchImageView;
+
 import com.example.questionnaireapp.R;
 //links
 import android.net.Uri;

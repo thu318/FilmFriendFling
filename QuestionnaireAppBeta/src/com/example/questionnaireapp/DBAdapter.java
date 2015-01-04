@@ -68,7 +68,12 @@ public class DBAdapter {
 		public void onCreate(SQLiteDatabase db) {
 			try {
 				db.execSQL(DATABASE_CREATE);
-//				addTextQuestions(db);
+				// minor error since the questions column is set to unique
+				// if the question is already there the app still tries to launch this method
+				// a way to avoid is to check if the question is already there each time when inserting a question
+				// but this can be costly.
+				// need to check last chapter of the book on sql lite saving data method.
+				addTextQuestions(db);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
