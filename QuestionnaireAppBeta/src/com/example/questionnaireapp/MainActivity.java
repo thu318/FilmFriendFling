@@ -120,17 +120,17 @@ public class MainActivity extends ActionBarActivity implements
 		background.setBackgroundResource(R.drawable.bg1);
 
 		db = new DBAdapter(this);
-		db.open();
-		AssetManager am =this.getAssets();
-		InputStream is;
+		// db.open();
+		// AssetManager am =this.getAssets();
+		// InputStream is;
 
-			try {
-				is = am.open("questionsFile.txt");
-				db.insertQuestion(is);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		// 	try {
+		// 		is = am.open("questionsFile.txt");
+		// 		db.insertQuestion(is);
+		// 	} catch (IOException e) {
+		// 		// TODO Auto-generated catch block
+		// 		e.printStackTrace();
+		// 	}
 
 
 		
