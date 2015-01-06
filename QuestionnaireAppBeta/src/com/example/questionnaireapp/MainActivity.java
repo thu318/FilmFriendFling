@@ -1,32 +1,25 @@
 package com.example.questionnaireapp;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import com.example.questionnaireapp.R;
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -35,7 +28,6 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements
 		android.view.View.OnClickListener {
@@ -57,7 +49,6 @@ public class MainActivity extends ActionBarActivity implements
 	private TextView textQuestion;
 	private Animation animation;
 	private Animation animation2;
-	private Animation animation3;
 
 	// max 16 types of answers
 	private static final int max = 16;
@@ -67,7 +58,7 @@ public class MainActivity extends ActionBarActivity implements
 	int totalAnswers;
 
 	// variables used for separating strings in database
-	// to calculate score of each characters 
+	// to calculate score of each characters :
 	private String line;
 	private String[] lineArray;
 	private String line3;
@@ -89,7 +80,7 @@ public class MainActivity extends ActionBarActivity implements
 	// sharedPreferences for options and sound options selected by user
 	SharedPreferences optionPreferences;
 	private boolean soundOptSelected;
-	private boolean musicSelected;
+	// private boolean musicSelected;
 
 	// sharedPreferences for saved progress
 	private String progressFile = "progressPref";
@@ -98,51 +89,64 @@ public class MainActivity extends ActionBarActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// setup the layout of the activity
 		setContentView(R.layout.activity_main);
-
-		// fullScreen();
-
+		// initialize variables
 		initVariables();
-
-		// setup questions
+		// set the current question
 		setQuestionView();
-		// setup sounds
+		// set sounds
 		setSounds();
+	}
 
-	}// end of onCreate method
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		// show menu
+		return true;
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		// Saving progress, i.e. store id of current question, score of
+		// character
+		if (id == R.id.save_progress) {
+			Editor editor = progress.edit();
+			editor.putInt("currQuestion", qid - 1);
+			for (String s : charactersScore.keySet()) {
+				editor.putInt(s, charactersScore.get(s));
+				Log.d(s, String.valueOf(charactersScore.get(s)));
+			}
+			editor.commit();
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
 
 	/**
-	 * Initialize variables in the xml file including animations
-	 * @throws IOException 
+	 * Initialize variables in the xml file and also the activities animations
+	 * 
+	 * @throws IOException
 	 */
-	private void initVariables(){
+	private void initVariables() {
 		background = findViewById(R.id.mainLayout);
 		background.setBackgroundResource(R.drawable.bg1);
 
 		db = new DBAdapter(this);
-		// db.open();
-		// AssetManager am =this.getAssets();
-		// InputStream is;
 
-		// 	try {
-		// 		is = am.open("questionsFile.txt");
-		// 		db.insertQuestion(is);
-		// 	} catch (IOException e) {
-		// 		// TODO Auto-generated catch block
-		// 		e.printStackTrace();
-		// 	}
-
-
-		
 		Bundle b = getIntent().getExtras();
 		boolean resumePressed = b.getBoolean("ResumePressed");
-		
+
 		// progress preferences
 		progress = getSharedPreferences(progressFile, Context.MODE_PRIVATE);
 		Log.d("resPressed", String.valueOf(resumePressed));
-		
-		//if user chose resume from start screen, load saved progress, else call setHashTable(set character scores to 1)
-		if(resumePressed)
+
+		// if user chose resume from start screen, load saved progress, else
+		// call setHashTable(set character scores to 1)
+		if (resumePressed)
 			loadProgress();
 		else
 			setHashTable(charactersScore);
@@ -159,8 +163,6 @@ public class MainActivity extends ActionBarActivity implements
 				R.anim.translate);
 		animation2 = AnimationUtils.loadAnimation(getApplicationContext(),
 				R.anim.translate2);
-		animation3 = AnimationUtils.loadAnimation(getApplicationContext(),
-				R.anim.fade);
 		// finds scroll view
 		scrollView = (ScrollView) findViewById(R.id.scrollView1);
 
@@ -177,8 +179,6 @@ public class MainActivity extends ActionBarActivity implements
 
 		//
 		nextButton = (Button) findViewById(R.id.button1);
-		//
-		nextButton.startAnimation(animation3);
 		// update score after pressing next button
 		nextButton.setOnClickListener(this);
 
@@ -186,28 +186,9 @@ public class MainActivity extends ActionBarActivity implements
 		optionPreferences = getSharedPreferences(OptionScreen.optionFile,
 				Context.MODE_PRIVATE);
 		soundOptSelected = optionPreferences.getBoolean("soundOptValue", false);
-		musicSelected = optionPreferences.getBoolean("musicOptValue", false);
+		// musicSelected = optionPreferences.getBoolean("musicOptValue", false);
 
 	}
-
-	/**
-	 * Hides the menu and action bar
-	 */
-//	private void fullScreen() {
-//		if (Build.VERSION.SDK_INT < 16) {
-//			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//					WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//		} else {
-//			View decorView = getWindow().getDecorView();
-//			// Hide the status bar.
-//			int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//			decorView.setSystemUiVisibility(uiOptions);
-//			// Remember that you should never show the action bar if the
-//			// status bar is hidden, so hide that too if necessary.
-//			ActionBar actionBar = getActionBar();
-//			actionBar.hide();
-//		}
-//	}
 
 	//
 	//
@@ -255,21 +236,23 @@ public class MainActivity extends ActionBarActivity implements
 	//
 	//
 	private void setQuestionView() {
+		// show the current question 
 		textQuestion.setText(currentQuestion.getQUESTION());
 		textQuestion.startAnimation(animation);
-		// Toast.makeText(this, "Answer Count : " +
-		// currentQuestion.getANSWER_COUNT() , Toast.LENGTH_LONG).show();
+
+		// get the answers of the current question from the question object
 		line = currentQuestion.getANSWERS();
-		// Toast.makeText(this, "Answers : " + line , Toast.LENGTH_LONG).show();
+		// split the answers in the current question (";")
 		lineArray = line.trim().split(ANSWER_SEPARATOR);
 
+		//
 		totalAnswers = currentQuestion.getANSWER_COUNT();
-		// Toast.makeText(this, totalAnswers, Toast.LENGTH_LONG).show();
 		Log.d("total answers", String.valueOf(totalAnswers));
 
 		// make at least the first one true to avoid errors if the user doesn't
-		//select an option
+		// select an option
 		rd[0].setChecked(true);
+		// show all answers by changing the text for the radio buttons
 		for (int i = 0; i < totalAnswers; i++) {
 			rd[i].setText(lineArray[i]);
 			rd[i].startAnimation(animation2);
@@ -326,7 +309,6 @@ public class MainActivity extends ActionBarActivity implements
 				currentQuestion = questionList.get(qid);
 				// set the next questions or get results
 				setQuestionView();
-				nextButton.startAnimation(animation3);
 
 				// it's the last question
 			} else {
@@ -380,17 +362,11 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	/**
-	 * method for changing background by its id
-	 * @param id - id of choosen background in drawable
-	 */
-	private void changeBgById(int id) {
-		background.setBackgroundResource(id);
-	}
-
-	/**
 	 * method for playing a sound each time a button/radio button clicked
+	 * 
 	 * @param context
-	 * @param resid - id of choosen sound to play
+	 * @param resid
+	 *            - id of choosen sound to play
 	 */
 	private void playClickSound(Context context, int resid) {
 		clickSound = MediaPlayer.create(context, resid);
@@ -430,40 +406,14 @@ public class MainActivity extends ActionBarActivity implements
 		}
 		return maxKeys;
 	}
-	
+
 	/**
 	 * load progress from progress sharedPreferences
 	 */
-	private void loadProgress(){
-		qid = progress.getInt("currQuestion",0);
-		for(String c: CHARACTERS)
+	private void loadProgress() {
+		qid = progress.getInt("currQuestion", 0);
+		for (String c : CHARACTERS)
 			charactersScore.put(c, progress.getInt(c, 1));
-	}
-
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		// show menu
-		return true;
-	}
-
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		//Saving progress, i.e. store id of current question, score of character
-		if (id == R.id.save_progress) {
-			Editor editor = progress.edit();
-			editor.putInt("currQuestion", qid-1);
-			for (String s : charactersScore.keySet()) {
-				editor.putInt(s, charactersScore.get(s));
-				Log.d(s,String.valueOf(charactersScore.get(s)));
-			}
-			editor.commit();
-		}
-
-		return super.onOptionsItemSelected(item);
 	}
 
 	//
@@ -472,92 +422,6 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		// setContentView(R.layout.myLayout);
-		Toast.makeText(this, "Orientation changed", Toast.LENGTH_LONG).show();
 	}
-
-	// -----------------------------------------------------------------------------
-	// EXTRA DATABASE FUNCTIONS
-	// source : Lee, Wei-Meng, Android Application Cookbook 2013
-	// Chapter 10 Persisting Data
-	// -----------------------------------------------------------------------------
-
-	//
-	// DBAdapter.java addQuestions()
-	// Adds strings/number to an SQLite database created
-	//
-	// public void addQuestions() {
-	// // ---add a question---
-	// db.open();
-	//
-	// AssetManager am = this.getAssets();
-	// InputStream is;
-	// try {
-	// is = am.open("questionsFile.txt");
-	// db.insertQuestion(is);
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	//
-	// db.close();
-	// }
-
-	// public void getQuestions() {
-	// // --get all questions---
-	// db.open();
-	// Cursor c = db.getAllQuestions();
-	// if (c.moveToFirst()) {
-	// do {
-	// displayQuestion(c);
-	// } while (c.moveToNext());
-	// }
-	// db.close();
-	// }
-	//
-	// public void getQuestion(int rowId) {
-	// // ---get a question---
-	// db.open();
-	// Cursor c = db.getQuestion(rowId);
-	// if (c.moveToFirst())
-	// displayQuestion(c);
-	// else
-	// Toast.makeText(this, "No question found", Toast.LENGTH_LONG).show();
-	// db.close();
-	// }
-	//
-	// public void updateQuestion(int rowId) {
-	// // ---update a question---
-	// db.open();
-	// if (db.updateQuestion(rowId, "new question", "new answer"))
-	// Toast.makeText(this, "Update successful.", Toast.LENGTH_LONG)
-	// .show();
-	// else
-	// Toast.makeText(this, "Update failed.", Toast.LENGTH_LONG).show();
-	// db.close();
-	// }
-	//
-	// public void deleteQuestion(int rowId) {
-	// db.open();
-	// if (db.deleteQuestion(rowId))
-	// Toast.makeText(this, "Delete successful.", Toast.LENGTH_LONG)
-	// .show();
-	// else
-	// Toast.makeText(this, "Delete failed.", Toast.LENGTH_LONG).show();
-	// db.close();
-	// }
-	//
-	// public void deleteQuestions() {
-	// db.open();
-	// db.deleteQuestions();
-	// db.close();
-	// }
-	//
-	// public void displayQuestion(Cursor c) {
-	// Toast.makeText(
-	// this,
-	// "id: " + c.getString(0) + "\n" + "Question: " + c.getString(1)
-	// + "\n" + "Answer:  " + c.getString(2),
-	// Toast.LENGTH_LONG).show();
-	// }
 
 }
