@@ -14,6 +14,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -163,7 +164,7 @@ public class MainActivity extends ActionBarActivity implements
 				R.anim.translate);
 		animation2 = AnimationUtils.loadAnimation(getApplicationContext(),
 				R.anim.translate2);
-		// finds scroll view
+		// set scrollView variable as the scroll view found in the layout folder
 		scrollView = (ScrollView) findViewById(R.id.scrollView1);
 
 		grp = (RadioGroup) findViewById(R.id.radioGroup1);
@@ -190,15 +191,16 @@ public class MainActivity extends ActionBarActivity implements
 
 	}
 
-	//
-	//
-	//
+	/**
+	 * Creates actionListeners for the radio buttons, so that it plays a sound
+	 * when clicked. Noting that it only does this when the sound preference of
+	 * the user is on.
+	 * 
+	 * @see ActionListener
+	 * @see soundOptSelected - option variable for sounds
+	 */
 	private void setSounds() {
-
-		/*
-		 * play click sound when each radiobutton is clicked when user selected
-		 * soundOption
-		 */
+		// Sound on in options
 		if (soundOptSelected) {
 			OnCheckedChangeListener grpListener = new OnCheckedChangeListener() {
 				public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -206,6 +208,7 @@ public class MainActivity extends ActionBarActivity implements
 					int x = rand.nextInt(5);
 					switch (x) {
 					case 0:
+						// play sound 1..
 						playClickSound(MainActivity.this, R.raw.rd_click);
 						break;
 					case 1:
@@ -232,11 +235,12 @@ public class MainActivity extends ActionBarActivity implements
 		grp.setOnClickListener(this);
 	}
 
-	//
-	//
-	//
+	/**
+	 * Changes the texts in the current activity into the current question and
+	 * its answers to the user current progress in the questionnaire.
+	 */
 	private void setQuestionView() {
-		// show the current question 
+		// show the current question
 		textQuestion.setText(currentQuestion.getQUESTION());
 		textQuestion.startAnimation(animation);
 
@@ -245,8 +249,9 @@ public class MainActivity extends ActionBarActivity implements
 		// split the answers in the current question (";")
 		lineArray = line.trim().split(ANSWER_SEPARATOR);
 
-		//
+		// get the number of answers in the current question
 		totalAnswers = currentQuestion.getANSWER_COUNT();
+		// show the number of answers in the logs
 		Log.d("total answers", String.valueOf(totalAnswers));
 
 		// make at least the first one true to avoid errors if the user doesn't
@@ -254,20 +259,36 @@ public class MainActivity extends ActionBarActivity implements
 		rd[0].setChecked(true);
 		// show all answers by changing the text for the radio buttons
 		for (int i = 0; i < totalAnswers; i++) {
+			// set the text of the answer to the i string in the array and so
+			// on..
+			// ie. when i is 0 set it to the first string the string array.
 			rd[i].setText(lineArray[i]);
+			// start the animation of the answer text
 			rd[i].startAnimation(animation2);
 		}
-		// hide unused radio buttons
-		for (int i = totalAnswers; i < max; i++)
-			rd[i].setVisibility(View.INVISIBLE);
 
-		// increase question id to move on to a new question next time
+		for (int i = totalAnswers; i < max; i++) {
+			// hide unused radio buttons, so that the user can't select these
+			// answers
+			rd[i].setVisibility(View.INVISIBLE);
+		}
+
+		// increase question id to move on to a new question next time this
+		// method is called
 		qid++;
 	}
 
-	//
-	//
-	//
+	/**
+	 * Launches actions after the user clicks the next button after selecting an
+	 * answer to a question in the questionnaire.
+	 * 
+	 * 1. Play sound if the sound is on in the user option preferences. 2. Reset
+	 * the place where the radio group is being viewed to its first position. 3.
+	 * Increase the scores of the characters in the answer selected. 4. Change
+	 * the background randomly and show the next question. 5. Repeat steps 1-4
+	 * until reaching the last question. 6. Log the scores and transfer the
+	 * character score list to the results activity class.
+	 */
 	public void onClick(View v) {
 		switch (v.getId()) {
 
@@ -314,25 +335,23 @@ public class MainActivity extends ActionBarActivity implements
 			} else {
 
 				Log.d("Character Scores", " " + charactersScore);
+				// calculate who has the highest score
 				maxCharacters = getMax(charactersScore);
 				Log.d("Top Scorers", " " + maxCharacters);
 
 				// Get results page
 				Intent intent = new Intent(MainActivity.this,
 						ResultActivity.class);
+				// create a new bundle
 				Bundle b = new Bundle();
-				// Character that has the highest points
+				// put the character list arranged from the highest to lowest
+				// points in the bundle
 				b.putStringArrayList("maxCharacters", maxCharacters);
 				// List of characters ready
 				intent.putExtras(b);
 				startActivity(intent);
 				finish();
 			}
-
-			/*
-			 * saving
-			 */
-
 			break;
 		default:
 			break;
@@ -340,11 +359,10 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	/**
-	 * method for changing background randomly
+	 * Changes the questionnaire background randomly.
 	 */
 	private void changeBgRandomly() {
 		Random rand = new Random();
-		// int x = rand.nextInt(5);
 		int x = rand.nextInt(3);
 		switch (x) {
 		case 0:
@@ -362,11 +380,13 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	/**
-	 * method for playing a sound each time a button/radio button clicked
+	 * Play a sound
+	 * 
+	 * Used when the next button and radio button are pressed in this program
 	 * 
 	 * @param context
 	 * @param resid
-	 *            - id of choosen sound to play
+	 *            - id of chosen sound to play
 	 */
 	private void playClickSound(Context context, int resid) {
 		clickSound = MediaPlayer.create(context, resid);
@@ -380,24 +400,32 @@ public class MainActivity extends ActionBarActivity implements
 		clickSound.start();
 	}
 
-	//
-	// Function to make sure each character resets its score if the
-	// program restarts
-	//
+	/**
+	 * Resets all the characters score hash table to 1.
+	 */
 	private static void setHashTable(HashMap<String, Integer> charScore) {
 		for (int i = 0; i < CHARACTERS.length; i++) {
 			charScore.put(CHARACTERS[i], 1);
 		}
 	}
 
-	// get a list of the characters with the highest score
+	/**
+	 * Returns a list of the characters with the highest score
+	 * 
+	 * @param charactersScore
+	 * @return
+	 */
 	private static ArrayList<String> getMax(
-			HashMap<String, Integer> charactersScore2) {
+			HashMap<String, Integer> charactersScore) {
+
 		ArrayList<String> maxKeys = new ArrayList<String>();
 		int maxValue = 0;
-		for (Map.Entry<String, Integer> entry : charactersScore2.entrySet()) {
+
+		for (Map.Entry<String, Integer> entry : charactersScore.entrySet()) {
 			if (entry.getValue() > maxValue) {
-				maxKeys.clear(); /* New max remove all current keys */
+				// New max remove all current keys since 
+				// there could be more than one with the same score
+				maxKeys.clear(); 
 				maxKeys.add(entry.getKey());
 				maxValue = entry.getValue();
 			} else if (entry.getValue() == maxValue) {
