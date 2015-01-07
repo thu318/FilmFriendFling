@@ -33,6 +33,9 @@ import android.widget.TextView;
 public class MainActivity extends ActionBarActivity implements
 		android.view.View.OnClickListener {
 
+	// key values in the scores hash table
+	// names used are of the future ideal characters for the user in the
+	// questionnaire
 	private static String[] CHARACTERS = { "Plywood", "Jar_Jar_Binks", "God",
 			"Blair_Witch", "Crazy_Eyes", "James_Bond", "Batman", "Leatherface",
 			"Lassie", "Xena", "Generic_Damsel", "Bernadette" };
@@ -87,6 +90,10 @@ public class MainActivity extends ActionBarActivity implements
 	private String progressFile = "progressPref";
 	SharedPreferences progress;
 
+	/**
+	 * Set all variables and sounds show the user the current question. Refer to
+	 * each method for a more descriptive information for each functions.
+	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -100,27 +107,37 @@ public class MainActivity extends ActionBarActivity implements
 		setSounds();
 	}
 
+	/**
+	 * Show or hide options menu
+	 */
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-		// show menu
 		return true;
 	}
 
+	/**
+	 * Actions for option items in the options menu
+	 * 
+	 * 1. Save - Saves user progress in the questionnaire
+	 */
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		// Saving progress, i.e. store id of current question, score of
-		// character
+		// Saving user progress if the save progress option is pressed
 		if (id == R.id.save_progress) {
+			// opens editor for progress sharedPreferences
 			Editor editor = progress.edit();
+			// store id of current question
 			editor.putInt("currQuestion", qid - 1);
+			// store the score of each characters
 			for (String s : charactersScore.keySet()) {
 				editor.putInt(s, charactersScore.get(s));
 				Log.d(s, String.valueOf(charactersScore.get(s)));
 			}
+			// commit this changes to the progress sharedPreferences
 			editor.commit();
 		}
 
@@ -128,7 +145,19 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	/**
-	 * Initialize variables in the xml file and also the activities animations
+	 * Do nothing when the user changed the orientation of the device. Fixes the
+	 * error of the questionnaire resetting when the device changes orientation
+	 * after answering the first question.
+	 */
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+	}
+
+	/**
+	 * Set and connect layout/variables in the xml file and also the activities
+	 * animations. Also, check if the current activity is a resumed activity or
+	 * not.
 	 * 
 	 * @throws IOException
 	 */
@@ -138,6 +167,8 @@ public class MainActivity extends ActionBarActivity implements
 
 		db = new DBAdapter(this);
 
+		// get the bundled activity from the start screen if the resume button
+		// is pressed or not " intent.putExtra("ResumePressed", true) "
 		Bundle b = getIntent().getExtras();
 		boolean resumePressed = b.getBoolean("ResumePressed");
 
@@ -166,24 +197,28 @@ public class MainActivity extends ActionBarActivity implements
 				R.anim.translate2);
 		// set scrollView variable as the scroll view found in the layout folder
 		scrollView = (ScrollView) findViewById(R.id.scrollView1);
-
+		// set the radiogroup variable "grp" as the radio button group found in
+		// the layout folder
 		grp = (RadioGroup) findViewById(R.id.radioGroup1);
 
-		// Initialize all radio button answers layout
-		// using get getResources
+		// set all radio button variables to the radio buttons found in the
+		// layout folder
+		// using get getResources to write the resId (resource id)
 		for (int i = 0; i < max; i++) {
 			String viewId = "radio" + i;
 			int resId = getResources().getIdentifier(viewId, "id",
 					getPackageName());
+			// resId number found and used to set the current radio button
 			rd[i] = (RadioButton) findViewById(resId);
 		}
 
-		//
+		// set the button nextButton to the next button found in the layout
+		// folder
 		nextButton = (Button) findViewById(R.id.button1);
 		// update score after pressing next button
 		nextButton.setOnClickListener(this);
 
-		// initialize sound/music options ???
+		// initialize sound and music options
 		optionPreferences = getSharedPreferences(OptionScreen.optionFile,
 				Context.MODE_PRIVATE);
 		soundOptSelected = optionPreferences.getBoolean("soundOptValue", false);
@@ -286,8 +321,8 @@ public class MainActivity extends ActionBarActivity implements
 	 * the place where the radio group is being viewed to its first position. 3.
 	 * Increase the scores of the characters in the answer selected. 4. Change
 	 * the background randomly and show the next question. 5. Repeat steps 1-4
-	 * until reaching the last question. 6. Log the scores and transfer the
-	 * character score list to the results activity class.
+	 * until reaching the last question. 6. Log the scores and transfer the list
+	 * of characters with the highest score to the results activity class.
 	 */
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -345,7 +380,7 @@ public class MainActivity extends ActionBarActivity implements
 				// create a new bundle
 				Bundle b = new Bundle();
 				// put the character list arranged from the highest to lowest
-				// points in the bundle
+				// ranking in the bundle
 				b.putStringArrayList("maxCharacters", maxCharacters);
 				// List of characters ready
 				intent.putExtras(b);
@@ -413,43 +448,46 @@ public class MainActivity extends ActionBarActivity implements
 	 * Returns a list of the characters with the highest score
 	 * 
 	 * @param charactersScore
-	 * @return
+	 *            - character name, character current score
+	 * @return list of characters with the highest score
 	 */
 	private static ArrayList<String> getMax(
 			HashMap<String, Integer> charactersScore) {
 
+		// List of characters with the highest score
 		ArrayList<String> maxKeys = new ArrayList<String>();
+		// Highest score
 		int maxValue = 0;
 
 		for (Map.Entry<String, Integer> entry : charactersScore.entrySet()) {
 			if (entry.getValue() > maxValue) {
-				// New max remove all current keys since 
+				// New max found, remove all current keys since
 				// there could be more than one with the same score
-				maxKeys.clear(); 
+				maxKeys.clear();
+				// Add this key (the character name) to the list of characters
+				// with the highest score
 				maxKeys.add(entry.getKey());
+				// Set the new highest score
 				maxValue = entry.getValue();
 			} else if (entry.getValue() == maxValue) {
+				// Add another to the list
 				maxKeys.add(entry.getKey());
 			}
 		}
+		// Return the list of characters with the highest score
 		return maxKeys;
 	}
 
 	/**
-	 * load progress from progress sharedPreferences
+	 * Loads user progress from progress sharedPreferences
 	 */
 	private void loadProgress() {
+		// get the number of the current question or return 0 as default
 		qid = progress.getInt("currQuestion", 0);
+		// replace the characters score with the score from the progress or set
+		// it to 1
 		for (String c : CHARACTERS)
 			charactersScore.put(c, progress.getInt(c, 1));
-	}
-
-	//
-	// http://stackoverflow.com/questions/456211/activity-restart-on-rotation-android
-	//
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
 	}
 
 }
