@@ -33,61 +33,134 @@ import android.widget.TextView;
 public class MainActivity extends ActionBarActivity implements
 		android.view.View.OnClickListener {
 
-	// key values in the scores hash table
-	// names used are of the future ideal characters for the user in the
-	// questionnaire
+	/**
+	 * key values in the character scores hash table names used are of the
+	 * future ideal characters for the user in the questionnaire
+	 */
 	private static String[] CHARACTERS = { "Plywood", "Jar_Jar_Binks", "God",
 			"Blair_Witch", "Crazy_Eyes", "James_Bond", "Batman", "Leatherface",
 			"Lassie", "Xena", "Generic_Damsel", "Bernadette" };
 
-	// database connect
+	/**
+	 * database connection
+	 */
 	private DBAdapter db;
-	// to get all the questions in list form
+	/**
+	 * all the questions in list form
+	 */
 	private List<Question> questionList;
-
-	// starting question
+	/**
+	 * question id
+	 */
 	int qid = 0;
 
-	// question variables:
+	// ----------------------------------
+	// QUESTION VARIABLES
+	// ---------------------------------
+	/**
+	 * Question object
+	 */
 	private Question currentQuestion;
+	/**
+	 * TextView to show the question text string
+	 */
 	private TextView textQuestion;
+	/**
+	 * Translate animation from right to left
+	 */
 	private Animation animation;
+	/**
+	 * Translate animation from right to left with .5 seconds delay
+	 */
 	private Animation animation2;
-
-	// max 16 types of answers
+	// ---------------------------------
+	// ANSWERS VARIABLES
+	// ----------------------------------
+	/**
+	 * max 16 types of answers
+	 */
 	private static final int max = 16;
+	/**
+	 * the radio group for the answers
+	 */
 	RadioGroup grp;
+	/**
+	 * separating each radio buttons
+	 */
 	RadioButton rd[] = new RadioButton[max];
+	/**
+	 * the button to press to progress through the questionnaire
+	 */
 	Button nextButton;
+	/**
+	 * number of answers in the current question
+	 */
 	int totalAnswers;
+	// -----------------------------------
 
+	// -------------------------------------------------------------------------------
 	// variables used for separating strings in database
-	// to calculate score of each characters :
+	// to calculate and store the score of each characters
+	// -------------------------------------------------------------------------------
 	private String line;
 	private String[] lineArray;
 	private String line3;
 	private String[] lineArray3;
 	private static final String ANSWER_SEPARATOR = ";";
 	private static final String CHAR_PTS_SEPARATOR = "#";
+	/**
+	 * the current location of the radio button selected in the question by the
+	 * user
+	 */
 	private int index;
+	/**
+	 * score given for selecting the answer of the current question for the
+	 * current character
+	 */
 	private int currentCharacterScore;
+	/**
+	 * list of characters which has the highest score
+	 */
 	ArrayList<String> maxCharacters;
+	/**
+	 * list of characters with their score
+	 */
 	static HashMap<String, Integer> charactersScore = new HashMap<String, Integer>();
+	// --------------------------------------------------------------------------------
 
-	// click sound for nextButton and radio buttons
+	/**
+	 * click sound for nextButton and radio buttons
+	 */
 	private MediaPlayer clickSound;
-	// background, will be randomly changed
+	/**
+	 * background, will be randomly changed
+	 */
 	private View background;
-	// scroll view for a lot of possible answers control
+	/**
+	 * scroll view for a lot of possible answers control
+	 */
 	private ScrollView scrollView;
 
-	// sharedPreferences for options and sound options selected by user
+	/**
+	 * sharedPreferences for options and sound options selected by user
+	 */
 	SharedPreferences optionPreferences;
+	/**
+	 * see if the user enabled/disabled sound
+	 */
 	private boolean soundOptSelected;
+	/**
+	 * see if the user enabled/disabled music
+	 */
 	// private boolean musicSelected;
 
-	// sharedPreferences for saved progress
+	/**
+	 * sharedPreferences name for saved progress
+	 */
 	private String progressFile = "progressPref";
+	/**
+	 * to save important data of for the progress of the user
+	 */
 	SharedPreferences progress;
 
 	/**
@@ -263,10 +336,8 @@ public class MainActivity extends ActionBarActivity implements
 					}
 				}
 			};
-			//
 			grp.setOnCheckedChangeListener(grpListener);
 		}
-		//
 		grp.setOnClickListener(this);
 	}
 
