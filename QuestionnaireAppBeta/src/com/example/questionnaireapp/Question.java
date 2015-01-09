@@ -1,30 +1,41 @@
 package com.example.questionnaireapp;
 
+/**
+ * Simple class to easily create questions for the questionnaire. 
+ * Each variables have their own column from the database created,
+ * where the data is read from a text file. 
+ */
 public class Question {
 
 	private int ID;					
 	private String QUESTION;	
 	private int ANSWER_COUNT;
 	private String ANSWERS;
-//	private String CHARACTER_COUNT;
 	private String CHARACTERS;
 
 	public Question()
 	{	
-		//_id
+		/**
+		 * primary key auto incremented 
+		 */
 		ID=0;
-		//What is your favorite colour?
+		/**
+		 * string example :  "What is your favorite color?
+		 */
 		QUESTION="";		 
-		//4
+		/**
+		 * int example :  4
+		 */
 		ANSWER_COUNT=0;	
-		//blue;red;green;yellow
+		/**
+		 * string example : blue;red;green;yellow 
+		 */
 		ANSWERS="";		
-//		//2;3;1;1 the effected characters when answering a question with options 1 , 2 , 3 or 4
-//		// option 1 has 2 affected, and option 2 has 3 ...
-//		CHARACTER_COUNT="";
-		//character1;character2|character3;character4;character5|character6|character7
-		//each options will be separated by "|"
-		//each affected character set is separated by ";"
+		/**
+		 * string example : character1;character2|character3;character4;character5|character6|character7
+		 * - Each answers to the question will have some characters score affected by it and will be separated by "|".
+		 * - Affected characters from selecting this option set is separated by ";" 
+		 */
 		CHARACTERS="";		 
 	}						 
 
@@ -36,7 +47,6 @@ public class Question {
 		QUESTION=question;		
 		ANSWER_COUNT=answer_count;		
 		ANSWERS=answers;				
-//		CHARACTER_COUNT=character_count; 
 		CHARACTERS=characters;		
 	}
 
@@ -57,10 +67,6 @@ public class Question {
 	public String getANSWERS(){
 		return ANSWERS;
 	}
-
-//	public String getCHARACTER_COUNT(){
-//		return CHARACTER_COUNT;
-//	}
 
 	public String getCHARACTERS(){
 		return CHARACTERS;
@@ -83,10 +89,6 @@ public class Question {
 	public void setANSWERS(String answers){
 		ANSWERS=answers;
 	}
-
-//	public void setCHARACTER_COUNT(String character_count){
-//		CHARACTER_COUNT=character_count;
-//	}
 
 	public void setCHARACTERS(String characters){
 		CHARACTERS=characters;
