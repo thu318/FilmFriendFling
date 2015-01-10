@@ -4,13 +4,13 @@ film-friend-fling
 The questionnaire app that matches you to a film/tv character you should date.
 
 
-ABOUT
+<h2>ABOUT</h2>
 
 This app is aimed towards very sad people that waste their life thinking about possible relationships they could have 
 with various film and television characters when they could be busy forming bonds with other human beings. Hence the term 
 ''sad person''. If you are one of these sad people, we would like to thank you for being our guinea pigs. 
 
-HOW THE APP WORKS
+<h2>HOW THE APP WORKS</h2>
 
 You will be taken through a list of psychologically intensive questions that tunnel deep within the inner caves 
 of your soul, assessing who you are as a person.
