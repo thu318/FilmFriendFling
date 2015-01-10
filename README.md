@@ -23,3 +23,6 @@ After you are given your match you can then click upon the character icon and se
 subordinate form of literature know as comic strips.
 
 
+To run (Win/Mac/Linux)
+
+Import whole folder into Eclipse 
