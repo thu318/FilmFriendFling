@@ -23,6 +23,12 @@ After you are given your match you can then click upon the character icon and se
 subordinate form of literature know as comic strips.
 
 
-To run (Win/Mac/Linux)
+<h1>To run (Win/Mac/Linux)</h1>
 
-Import whole folder into Eclipse 
+Import whole QuestionnaireAppBeta folder into Eclipse by:
+File --> Import --> Android/Existing Android Code Into Workspace
+
+Then fix appcompat_v7 library location
+1. Open project properties (Right click project)
+2. Select android
+3. Remove old and add own appcompat_v7 library
