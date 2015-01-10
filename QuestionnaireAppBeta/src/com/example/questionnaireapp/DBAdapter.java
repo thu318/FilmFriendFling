@@ -1,3 +1,10 @@
+/*
+ * By: Lee, Wei-Meng. Android Application Development Cookbook : 93
+ * 	   Creating and using SQLite databases programmatically
+ * Updated by: Ireneo Mercado
+ * 			   Thu Huong Dao 
+ */
+
 package com.example.questionnaireapp;
 
 import java.io.BufferedReader;
@@ -15,47 +22,126 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+/**
+ * Encapsulate all the complexities of accessing data so that is is transparent
+ * to the calling code. The calling code is mostly MainActivity.java, for
+ * getting all the questions in list form and the number of questions in the
+ * table.
+ * 
+ * @see Lee, Wei-Meng. Android Application Development Cookbook : 93 Creating
+ *      and using SQLite databases programmatically.
+ */
 public class DBAdapter {
-	// Questionnaire table columns names
+	// -------------------------------------------------------------------------
+	// QUESTIONNAIRE TABLE
 	// note : (no space " " in between names because it will be used in a SQLite
 	// query)
+	// ------------------------------------------------------------------------
+	/**
+	 * Primary key id
+	 */
 	static final String KEY_ID = "id";
+	/**
+	 * String column. The questions to ask the user.
+	 */
 	static final String QUESTION = "Question";
+	/**
+	 * String column. The number of answers for the question
+	 */
 	static final String ANSWER_COUNT = "Answer_Count";
+	/**
+	 * String column. The answers for the question, separated by semi-colons
+	 * ";".
+	 */
 	static final String ANSWERS = "Answers";
-	//	static final String CHARACTER_COUNT = "Character_Count";
+	/**
+	 * String column. The characters affected by an answer, separated by "|".
+	 * Each option then is separated by a semi-colon ";" if there is more than
+	 * one character affected by a question. The score is separated by "#" for
+	 * each answer.
+	 */
 	static final String CHARACTERS = "Characters";
 
-
-
-	// Questionnaire database details
+	// ----------------------------------------------------------------------
+	//
+	// QUESTIONNAIRE DATABASE
+	//
+	// ----------------------------------------------------------------------
 	static final String DATABASE_NAME = "Questionnaire_Database";
 	static final String DATABASE_TABLE = "Questionnaire_Table";
 	static final int DATABASE_VERSION = 1;
-	static final String TAG = "DBAdapter";
-	// for function execSQL
-	// execSQL is used when the database command does not return anything
+
+	/**
+	 * Creating the questionnaire table in the Questionnaire_Database database
+	 * execSQL command. note: execSQL is used when the database command does not
+	 * return anything
+	 */
 	static final String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "
 			+ DATABASE_TABLE + "(" + KEY_ID
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + QUESTION
 			+ " TEXT UNIQUE, " + ANSWER_COUNT + " INTEGER, " + ANSWERS
 			+ " TEXT, " + CHARACTERS + " TEXT" + ")";
 
-	static final String[] COLUMNS = {QUESTION,ANSWER_COUNT,ANSWERS,CHARACTERS};
+	/**
+	 * All columns in the questionnaire table. Used in inserting data to the
+	 * table for loop when adding questions read from a text file.
+	 */
+	static final String[] COLUMNS = { QUESTION, ANSWER_COUNT, ANSWERS,
+			CHARACTERS };
 
-
-	//String used in text files to separate lines, questions, answers, between characters' name and corresponding points
+	// String used in text files to separate lines, questions, answers, between
+	// characters' name and corresponding points
+	/**
+	 * Separate questions in the text file.
+	 */
 	static final String QUESTION_SEPARATOR = "~";
+	/**
+	 * Separate strings in the text file so that the right data goes into the
+	 * right questionnaire table columns.
+	 */
 	static final String LINE_SEPARATOR = "=";
 
-
+	/**
+	 * Used context for accessing the assets folder to read the questions,
+	 * answers etc. (questionsFile.txt)
+	 * 
+	 * Explanation of the context class Context.class :
+	 * 
+	 * Interface to global information about an application environment. This is
+	 * an abstract class whose implementation is provided by the Android system.
+	 * It allows access to application-specific resources and classes, as well
+	 * as up-calls for application-level operations such as launching
+	 * activities, broadcasting and receiving intents, etc.
+	 */
 	static Context context;
 
+	/**
+	 * Encapsulate all the complexities of accessing data so that is is
+	 * transparent to the calling code. The calling code is mostly
+	 * MainActivity.java, for getting all the questions in list form and the
+	 * number of questions in the table.
+	 * 
+	 * @see Lee, Wei-Meng. Android Application Development Cookbook : 93 Recipes
+	 *      for Building Winning Apps Creating and using SQLite databases
+	 *      programmatically.
+	 */
 	DatabaseHelper DBHelper;
+	/**
+	 * Android built-in database system.
+	 */
 	SQLiteDatabase db;
 
+	/**
+	 * Adds a private class that extends the SQLiteOpenHelper class, which is a
+	 * helper class in Android for database creation and version management.
+	 * Overrides the onCreate() and onUpgrade() methods.
+	 * 
+	 * @param ctx
+	 *            - context
+	 * @see - Context.class
+	 */
 	public DBAdapter(Context ctx) {
-		this.context = ctx;
+		DBAdapter.context = ctx;
 		DBHelper = new DatabaseHelper(context);
 	}
 
@@ -65,36 +151,42 @@ public class DBAdapter {
 		}
 
 		@Override
+		/**
+		 * If the database isn't created yet, these method is launched.
+		 * Create the database and add its database columns values.
+		 */
 		public void onCreate(SQLiteDatabase db) {
 			try {
 				db.execSQL(DATABASE_CREATE);
-				// minor error since the questions column is set to unique
-				// if the question is already there the app still tries to launch this method
-				// a way to avoid is to check if the question is already there each time when inserting a question
-				// but this can be costly.
-				// need to check last chapter of the book on sql lite saving data method.
 				addTextQuestions(db);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
-		// ---inserting already created questions from text file---
-		public void addTextQuestions(SQLiteDatabase db){
-			
+		/**
+		 * To insert created questions from questionsFile.txt file inside the
+		 * assets folder to the questionnaire database table.
+		 * 
+		 * @param db
+		 *            - the questionnaire database
+		 */
+		public void addTextQuestions(SQLiteDatabase db) {
+
 			AssetManager am = context.getAssets();
 			InputStream is;
 			try {
 				is = am.open("questionsFile.txt");
 
-
-				BufferedReader br = new BufferedReader(new InputStreamReader(is));
+				BufferedReader br = new BufferedReader(
+						new InputStreamReader(is));
 				String line;
 				StringBuffer content = new StringBuffer();
-				while ((line = br.readLine()) != null) 
+				while ((line = br.readLine()) != null)
 					content.append(line);
 
-				String[] questionsArray = content.toString().split(QUESTION_SEPARATOR);
+				String[] questionsArray = content.toString().split(
+						QUESTION_SEPARATOR);
 
 				for (String temp : questionsArray) {
 					String qElements[] = temp.split(LINE_SEPARATOR);
@@ -107,83 +199,47 @@ public class DBAdapter {
 
 				}
 				br.close();
-				is.close();	
+				is.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
+		/**
+		 * Recreate the database
+		 */
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-					+ newVersion + ", which will destroy all old data");
 			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
 			onCreate(db);
 		}
 	}
 
-	// ---opens the database---
+	/**
+	 * Opens the database
+	 * 
+	 * @return opened database
+	 * @throws SQLException
+	 */
 	public DBAdapter open() throws SQLException {
 		db = DBHelper.getWritableDatabase();
 		return this;
 	}
 
-	// ---closes the database---
+	/**
+	 * Closes the database
+	 */
 	public void close() {
 		DBHelper.close();
 	}
 
-
-	// ---inserting a new question in another java file---
-	public void insertQuestion(InputStream is) throws IOException {
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(is));
-		String line;
-		StringBuffer content = new StringBuffer();
-		while ((line = br.readLine()) != null) 
-			content.append(line);
-
-		String[] questionsArray = content.toString().split(QUESTION_SEPARATOR);
-
-		for (String temp : questionsArray) {
-			Log.d("questArr", temp);
-			String qElements[] = temp.split(LINE_SEPARATOR);
-			ContentValues values = new ContentValues();
-			for (int i = 0; i < qElements.length; i++)
-				values.put(COLUMNS[i], qElements[i]);
-			// Inserting Row
-			db.insert(DATABASE_TABLE, null, values);
-			Log.d("insertion", "inserted " + COLUMNS[0]);
-		}
-		br.close();
-		is.close();		
-	}
-
-
-	// ---deleting a particular question---
-	public boolean deleteQuestion(long rowId) {
-		return db.delete(DATABASE_TABLE, KEY_ID + "=" + rowId, null) > 0;
-	}
-
-	// ---deleting all questions---
-	public void deleteQuestions() {
-		db.delete(DATABASE_TABLE, null, null);
-	}
-
-	// ---deleting the table---
-	public void deleteTable() {
-		// String sql="DELETE FROM "+DATABASE_TABLE;
-		// db.execSQL(sql);
-		context.deleteDatabase(DATABASE_NAME);
-	}
-
-	// ---retrieves all the questions---
-	public Cursor getAllQuestions() {
-		return db.query(DATABASE_TABLE, new String[] { KEY_ID, QUESTION,
-				ANSWERS }, null, null, null, null, null);
-	}
-
-	// ---retrieves all the questions in a list---
+	/**
+	 * Retrieves all the questions in a list---
+	 * 
+	 * @return an arraylist of all data in the questionnaire table columns
+	 *         (questions, answers etc.) in list form, to be read and separated
+	 *         in the main activity.
+	 */
 	public List<Question> getAllQuestionsList() {
 		List<Question> questionList = new ArrayList<Question>();
 		// Select All Query
@@ -202,32 +258,17 @@ public class DBAdapter {
 				questionList.add(question);
 			} while (cursor.moveToNext());
 		}
-		// return quest list
 		return questionList;
 	}
 
-	// ---retrieves a particular question---
-	public Cursor getQuestion(long rowId) throws SQLException {
-		Cursor mCursor = db.query(true, DATABASE_TABLE, new String[] { KEY_ID,
-				QUESTION, ANSWERS }, KEY_ID + "=" + rowId, null, null, null,
-				null, null);
-		if (mCursor != null) {
-			mCursor.moveToFirst();
-		}
-		return mCursor;
-	}
-
-	// ---updates a question---
-	public boolean updateQuestion(long rowId, String question, String answers) {
-		ContentValues args = new ContentValues();
-		args.put(KEY_ID, rowId);
-		args.put(QUESTION, question);
-		args.put(ANSWERS, answers);
-		db.insert(DATABASE_TABLE, null, args);
-		return db.update(DATABASE_TABLE, args, KEY_ID + "=" + rowId, null) > 0;
-	}
-
-	// ---retrieves total rows---
+	/**
+	 * Retrieves total rows rows in the database table, so that the main
+	 * activity knows when all the questions have been asked to the user.
+	 * 
+	 * @return number of rows, which is the number of total questions in the
+	 *         questionnaire.
+	 * @throws SQLException
+	 */
 	public int getRows() throws SQLException {
 		String selectQuery = "SELECT  * FROM " + DATABASE_TABLE;
 		db = DBHelper.getReadableDatabase();
