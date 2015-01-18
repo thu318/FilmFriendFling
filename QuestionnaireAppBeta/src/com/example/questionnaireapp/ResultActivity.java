@@ -1,5 +1,13 @@
 package com.example.questionnaireapp;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import com.example.questinnaireapp.TouchImage.TouchImageView;
@@ -15,6 +23,9 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -26,7 +37,7 @@ import android.widget.Toast;
 
 import ie.nuim.dateapp.questionnaire.util.SystemUiHider;
 
-public class ResultActivity extends Activity {
+public class ResultActivity extends Activity{
 	/**
 	 * Outcomes in the switch statement for
 	 * displaying the results of the users questionnaire.
@@ -38,21 +49,26 @@ public class ResultActivity extends Activity {
 	}
 
 	/**
-	 * variable for the first one in the list of characters with the highest score
+	 * the first character from the bundled array list with the highest score
 	*/
 	private String value;
 	/**
-	 *  link of the character used in options menu
+	 *  web link of the character used in options menu
 	 */
 	private String imdblink = "";
 	/**
-	 *  dynamic image of the results
+	 *  dynamic image of the character
 	 */
 	private TouchImageView image;
 	/**
-	 * the set of images the character has
+	 * to load image from URL
 	 */
-	private static int[] images;
+	private Bitmap bitmap;
+	/**
+	 * to hold the set of images file locations of the characters 
+	 */
+	//private static int[] images;
+	private static Bitmap[] images;
 	/**
 	 *  the current place of the image gallery of the character selected
 	 */
@@ -207,134 +223,152 @@ public class ResultActivity extends Activity {
 		switch (character) {
 		case Plywood:
 			// set comic strip image
-			images = new int[3];
-			images[0] = R.drawable.character1;
-			images[1] = R.drawable.character1_2;
-			images[2] = R.drawable.character1_3;
-			setCurrentImage();
-			// image.setImageResource(R.drawable.character1);
+			images = new Bitmap[5];
+			
+			new Thread(new Runnable(){
+			    @Override
+			    public void run() {
+			        try {
+			        	bitmap = loadBitmap("https://lh5.googleusercontent.com/-ZIYdiwMIAE0/VLwIRMgrI6I/AAAAAAAACPY/bpQP8tpHtdA/w1037-h584-no/BLAIR%2BWITCH%2BDATE%2BPAGE%2B1.JPG"); 
+						images[0] = bitmap;
+			        	bitmap = loadBitmap("http://help.adobe.com/en_US/Director/11.0/images/vector_bitmap_image.png"); 
+						images[1] = bitmap;
+			        	bitmap = loadBitmap("http://help.adobe.com/en_US/Director/11.0/images/vector_bitmap_image.png"); 
+						images[2] = bitmap;
+			        	bitmap = loadBitmap("http://help.adobe.com/en_US/Director/11.0/images/vector_bitmap_image.png"); 
+						images[3] = bitmap;
+			        	bitmap = loadBitmap("http://help.adobe.com/en_US/Director/11.0/images/vector_bitmap_image.png"); 
+						images[4] = bitmap;
+						
+						setCurrentImage();
+			        } catch (Exception ex) {
+			            ex.printStackTrace();
+			        }
+			    }
+			}).start();
+			
+			//Toast.makeText(this,"Threads Active : " + Thread.activeCount(),
+			//		Toast.LENGTH_SHORT).show();
 			charImdbLink = "http://en.wikipedia.org/wiki/Plan_9_from_Outer_Space";
-			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-			// t.setText("you had fun sword figthing with " + value);
 			break;
-		case Jar_Jar_Binks:
-			images = new int[3];
-			images[0] = R.drawable.character2;
-			images[1] = R.drawable.character2_2;
-			images[2] = R.drawable.character2_3;
-			setCurrentImage();
-			// image.setImageResource(R.drawable.character2);
-			charImdbLink = "http://en.wikipedia.org/wiki/Jar_Jar_Binks";
-			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-			// t.setText("you kissed " + value + " on the cheek");
-			break;
-		case God:
-			images = new int[3];
-			images[0] = R.drawable.character3;
-			images[1] = R.drawable.character3_2;
-			images[2] = R.drawable.character3_3;
-			setCurrentImage();
-			// image.setImageResource(R.drawable.character3);
-			charImdbLink = "http://en.wikipedia.org/wiki/Morgan_Freeman";
-			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-			// t.setText("you had a crazy night with " + value);
-			break;
-		case Blair_Witch:
-			images = new int[3];
-			images[0] = R.drawable.character4;
-			images[1] = R.drawable.character4_2;
-			images[2] = R.drawable.character4_3;
-			setCurrentImage();
-			// image.setImageResource(R.drawable.character4);
-			charImdbLink = "http://en.wikipedia.org/wiki/The_Blair_Witch_Project";
-			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-			// t.setText(value +
-			// " spiked your drink and you couldn't remember what you did");
-			break;
-		case Crazy_Eyes:
-			images = new int[2];
-			images[0] = R.drawable.character5;
-			images[1] = R.drawable.character7_2;
-			setCurrentImage();
-			charImdbLink = "http://en.wikipedia.org/wiki/Crazy_Eyes_%28character%29";
-			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-			// t.setText("you had an argument with " + value + " about toads");
-			break;
-		case James_Bond:
-			images = new int[2];
-			images[0] = R.drawable.character6;
-			images[1] = R.drawable.character7_2;
-			setCurrentImage();
-			charImdbLink = "http://en.wikipedia.org/wiki/James_Bond";
-			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-			// t.setText(value + "carried you home because you passed out" );
-			break;
-		case Batman:
-			images = new int[2];
-			images[0] = R.drawable.character7;
-			images[1] = R.drawable.character7_2;
-			setCurrentImage();
-			// image.setImageResource(R.drawable.character7);
-			charImdbLink = "http://en.wikipedia.org/wiki/Batman";
-			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-			// t.setText("you had ice cream with " + value +
-			// " and shared funny childhood stories");
-			break;
-		case Leatherface:
-			images = new int[2];
-			images[0] = R.drawable.character7;
-			images[1] = R.drawable.character7_2;
-			setCurrentImage();
-			// image.setImageResource(R.drawable.character7);
-			charImdbLink = "http://en.wikipedia.org/wiki/Leatherface";
-			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-			// t.setText("you had ice cream with " + value +
-			// " and shared funny childhood stories");
-			break;
-		case Lassie:
-			images = new int[2];
-			images[0] = R.drawable.character7;
-			images[1] = R.drawable.character7_2;
-			setCurrentImage();
-			// image.setImageResource(R.drawable.character7);
-			charImdbLink = "http://en.wikipedia.org/wiki/Lassie";
-			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-			// t.setText("you had ice cream with " + value +
-			// " and shared funny childhood stories");
-			break;
-		case Xena:
-			images = new int[2];
-			images[0] = R.drawable.character7;
-			images[1] = R.drawable.character7_2;
-			setCurrentImage();
-			// image.setImageResource(R.drawable.character7);
-			charImdbLink = "http://en.wikipedia.org/wiki/Xena:_Warrior_Princess";
-			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-			// t.setText("you had ice cream with " + value +
-			// " and shared funny childhood stories");
-			break;
-		case Generic_Damsel:
-			images = new int[2];
-			images[0] = R.drawable.character7;
-			images[1] = R.drawable.character7_2;
-			setCurrentImage();
-			// image.setImageResource(R.drawable.character7);
-			charImdbLink = "http://www.imdb.com/name/nm0813812/";
-			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-			// t.setText("you had ice cream with " + value +
-			// " and shared funny childhood stories");
-			break;
-		case Bernadette:
-			images = new int[2];
-			images[0] = R.drawable.character7;
-			images[1] = R.drawable.character7_2;
-			setCurrentImage();
-			// image.setImageResource(R.drawable.character7);
-			charImdbLink = "http://www.imdb.com/name/nm0813812/";
-			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-			// t.setText("you had ice cream with " + value +
-			// " and shared funny childhood stories");
-			break;
+//		case Jar_Jar_Binks:
+//			images = new int[3];
+//			images[0] = R.drawable.character2;
+//			images[1] = R.drawable.character2_2;
+//			images[2] = R.drawable.character2_3;
+//			setCurrentImage();
+//			// image.setImageResource(R.drawable.character2);
+//			charImdbLink = "http://en.wikipedia.org/wiki/Jar_Jar_Binks";
+//			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+//			// t.setText("you kissed " + value + " on the cheek");
+//			break;
+//		case God:
+//			images = new int[3];
+//			images[0] = R.drawable.character3;
+//			images[1] = R.drawable.character3_2;
+//			images[2] = R.drawable.character3_3;
+//			setCurrentImage();
+//			// image.setImageResource(R.drawable.character3);
+//			charImdbLink = "http://en.wikipedia.org/wiki/Morgan_Freeman";
+//			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+//			// t.setText("you had a crazy night with " + value);
+//			break;
+//		case Blair_Witch:
+//			images = new int[3];
+//			images[0] = R.drawable.character4;
+//			images[1] = R.drawable.character4_2;
+//			images[2] = R.drawable.character4_3;
+//			setCurrentImage();
+//			// image.setImageResource(R.drawable.character4);
+//			charImdbLink = "http://en.wikipedia.org/wiki/The_Blair_Witch_Project";
+//			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+//			// t.setText(value +
+//			// " spiked your drink and you couldn't remember what you did");
+//			break;
+//		case Crazy_Eyes:
+//			images = new int[2];
+//			images[0] = R.drawable.character5;
+//			images[1] = R.drawable.character7_2;
+//			setCurrentImage();
+//			charImdbLink = "http://en.wikipedia.org/wiki/Crazy_Eyes_%28character%29";
+//			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+//			// t.setText("you had an argument with " + value + " about toads");
+//			break;
+//		case James_Bond:
+//			images = new int[2];
+//			images[0] = R.drawable.character6;
+//			images[1] = R.drawable.character7_2;
+//			setCurrentImage();
+//			charImdbLink = "http://en.wikipedia.org/wiki/James_Bond";
+//			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+//			// t.setText(value + "carried you home because you passed out" );
+//			break;
+//		case Batman:
+//			images = new int[2];
+//			images[0] = R.drawable.character7;
+//			images[1] = R.drawable.character7_2;
+//			setCurrentImage();
+//			// image.setImageResource(R.drawable.character7);
+//			charImdbLink = "http://en.wikipedia.org/wiki/Batman";
+//			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+//			// t.setText("you had ice cream with " + value +
+//			// " and shared funny childhood stories");
+//			break;
+//		case Leatherface:
+//			images = new int[2];
+//			images[0] = R.drawable.character7;
+//			images[1] = R.drawable.character7_2;
+//			setCurrentImage();
+//			// image.setImageResource(R.drawable.character7);
+//			charImdbLink = "http://en.wikipedia.org/wiki/Leatherface";
+//			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+//			// t.setText("you had ice cream with " + value +
+//			// " and shared funny childhood stories");
+//			break;
+//		case Lassie:
+//			images = new int[2];
+//			images[0] = R.drawable.character7;
+//			images[1] = R.drawable.character7_2;
+//			setCurrentImage();
+//			// image.setImageResource(R.drawable.character7);
+//			charImdbLink = "http://en.wikipedia.org/wiki/Lassie";
+//			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+//			// t.setText("you had ice cream with " + value +
+//			// " and shared funny childhood stories");
+//			break;
+//		case Xena:
+//			images = new int[2];
+//			images[0] = R.drawable.character7;
+//			images[1] = R.drawable.character7_2;
+//			setCurrentImage();
+//			// image.setImageResource(R.drawable.character7);
+//			charImdbLink = "http://en.wikipedia.org/wiki/Xena:_Warrior_Princess";
+//			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+//			// t.setText("you had ice cream with " + value +
+//			// " and shared funny childhood stories");
+//			break;
+//		case Generic_Damsel:
+//			images = new int[2];
+//			images[0] = R.drawable.character7;
+//			images[1] = R.drawable.character7_2;
+//			setCurrentImage();
+//			// image.setImageResource(R.drawable.character7);
+//			charImdbLink = "http://www.imdb.com/name/nm0813812/";
+//			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+//			// t.setText("you had ice cream with " + value +
+//			// " and shared funny childhood stories");
+//			break;
+//		case Bernadette:
+//			images = new int[2];
+//			images[0] = R.drawable.character7;
+//			images[1] = R.drawable.character7_2;
+//			setCurrentImage();
+//			// image.setImageResource(R.drawable.character7);
+//			charImdbLink = "http://www.imdb.com/name/nm0813812/";
+//			Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+//			// t.setText("you had ice cream with " + value +
+//			// " and shared funny childhood stories");
+//			break;
 		default:
 			break;
 		}
@@ -500,10 +534,54 @@ public class ResultActivity extends Activity {
 	//
 	//
 	private void setCurrentImage() {
-		image.setImageResource(images[index]);
+		//image.setImageResource(images[index]);
+		image.setImageBitmap(images[index]);
 		index = (++index % images.length);
 	}
-
+    
+    private static final int IO_BUFFER_SIZE = 4 * 1024;
+    
+    /**
+     * Loads a bitmap from the specified url. This can take a while, so it should not
+     * be called from the UI thread.
+     * 
+     * @param url The location of the bitmap asset
+     * 
+     * @return The bitmap, or null if it could not be loaded
+     */
+	public static Bitmap loadBitmap(String url) {
+		
+		
+		
+		try {
+			  
+			  Bitmap b = BitmapFactory.decodeStream((InputStream)new URL(url).getContent());
+			  return b;
+			} catch (MalformedURLException e) {
+			  e.printStackTrace();
+			} catch (IOException e) {
+			  e.printStackTrace();
+			}
+		return null;	
+	}
+	
+    /**
+     * Copy the content of the input stream into the output stream, using a
+     * temporary byte array buffer whose size is defined by
+     * {@link #IO_BUFFER_SIZE}.
+     * 
+     * @param in The input stream to copy from.
+     * @param out The output stream to copy to.
+     * @throws IOException If any error occurs during the copy.
+     */
+    private static void copy(InputStream in, OutputStream out) throws IOException {
+        byte[] b = new byte[IO_BUFFER_SIZE];
+        int read;
+        while ((read = in.read(b)) != -1) {
+            out.write(b, 0, read);
+        }
+    }
+	
 	// re-launch start screen
 	public void retry(View view) {
 		Intent intent = new Intent(this, StartScreen.class);
@@ -537,7 +615,9 @@ public class ResultActivity extends Activity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		setContentView(R.layout.activity_results);
-
+		
+	
+		 
 		initVariables();
 	}
 
