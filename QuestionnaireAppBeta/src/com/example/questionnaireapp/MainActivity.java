@@ -133,6 +133,10 @@ public class MainActivity extends ActionBarActivity implements
 	 */
 	private MediaPlayer clickSound;
 	/**
+	 * background music
+	 */
+	private MediaPlayer bg_music;
+	/**
 	 * background, will be randomly changed
 	 */
 	private View background;
@@ -152,7 +156,7 @@ public class MainActivity extends ActionBarActivity implements
 	/**
 	 * see if the user enabled/disabled music
 	 */
-	// private boolean musicSelected;
+	private boolean musicSelected;
 
 	/**
 	 * sharedPreferences name for saved progress
@@ -178,6 +182,15 @@ public class MainActivity extends ActionBarActivity implements
 		setQuestionView();
 		// set sounds
 		setSounds();
+	}
+	
+	/**
+	 * realese background music when Activity is on pause
+	 */
+	protected void onPause() {
+		super.onPause(); 
+		bg_music.release();
+		finish();
 	}
 
 	/**
@@ -208,7 +221,6 @@ public class MainActivity extends ActionBarActivity implements
 			// store the score of each characters
 			for (String s : charactersScore.keySet()) {
 				editor.putInt(s, charactersScore.get(s));
-				Log.d(s, String.valueOf(charactersScore.get(s)));
 			}
 			// commit this changes to the progress sharedPreferences
 			editor.commit();
@@ -245,9 +257,8 @@ public class MainActivity extends ActionBarActivity implements
 		Bundle b = getIntent().getExtras();
 		boolean resumePressed = b.getBoolean("ResumePressed");
 
-		// progress preferences
+		// get progress preferences
 		progress = getSharedPreferences(progressFile, Context.MODE_PRIVATE);
-		Log.d("resPressed", String.valueOf(resumePressed));
 
 		// if user chose resume from start screen, load saved progress, else
 		// call setHashTable(set character scores to 1)
@@ -295,7 +306,7 @@ public class MainActivity extends ActionBarActivity implements
 		optionPreferences = getSharedPreferences(OptionScreen.optionFile,
 				Context.MODE_PRIVATE);
 		soundOptSelected = optionPreferences.getBoolean("soundOptValue", false);
-		// musicSelected = optionPreferences.getBoolean("musicOptValue", false);
+		musicSelected = optionPreferences.getBoolean("musicOptValue", false);
 
 	}
 
@@ -339,6 +350,13 @@ public class MainActivity extends ActionBarActivity implements
 			grp.setOnCheckedChangeListener(grpListener);
 		}
 		grp.setOnClickListener(this);
+		
+		//create background music from a file in raw folder
+		bg_music = MediaPlayer.create(this, R.raw.do_do_do);
+		
+		//start background music according user preferences 
+		if (musicSelected)
+			bg_music.start();
 	}
 
 	/**
