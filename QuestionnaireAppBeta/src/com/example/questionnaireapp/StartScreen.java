@@ -15,14 +15,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 
-//import android.widget.Toast;
-
 /**
  * An activity class where the user could navigate between starting the
  * questionnaire, resuming a questionnaire and the options screens.
  * 
  */
 public class StartScreen extends Activity {
+
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -59,7 +58,7 @@ public class StartScreen extends Activity {
 	 * settings.
 	 * 
 	 * @see OptionsScreen.java
-	 * @see XML file activity_startn.xml android:onClick="option"
+	 * @see XML file activity_start.xml android:onClick="option"
 	 * @param view
 	 *            - XML fileOnClickListener interface requires a parameter of
 	 *            type View.
@@ -76,7 +75,7 @@ public class StartScreen extends Activity {
 	 * questionnaire.
 	 * 
 	 * @see MainActivity.java
-	 * @see XML file activity_startn.xml android:onClick="resume_progress"
+	 * @see XML file activity_start.xml android:onClick="resume_progress"
 	 * @param view
 	 *            - XML fileOnClickListener interface requires a parameter of
 	 *            type View.
