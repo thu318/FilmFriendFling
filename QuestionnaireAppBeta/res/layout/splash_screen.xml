@@ -3,22 +3,42 @@
     android:id="@+id/splashLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/dark2" >
+    android:background="@drawable/splash_bg"
+    android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/splashTV"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="20dp"
-        android:gravity="center_vertical"
-        android:textColor="#aaaaaa"
-        android:shadowColor="#0a0a0a"
-        android:shadowDx="20"
-        android:shadowDy="-15"
-        android:shadowRadius="20"
-        android:text="@string/splashText"
-        android:textSize="50sp"
-        android:textStyle="bold"
-        android:typeface="serif"/>
+    <LinearLayout
+        android:id="@+id/splashLinearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal" >
+
+        <View
+            android:id="@+id/splashView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/splashTV"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/splashText"
+            android:textSize="22sp"
+            android:shadowColor="#0a0a0a"
+            android:shadowDx="20"
+            android:shadowDy="-15"
+            android:shadowRadius="20"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:typeface="serif" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2" />
+    </LinearLayout>
+
 </RelativeLayout>
