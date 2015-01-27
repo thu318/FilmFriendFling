@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/light1"
+    android:background="@drawable/start_bg"
     android:longClickable="true" >
 
     <LinearLayout
@@ -14,30 +14,6 @@
         android:layout_centerVertical="true"
         android:orientation="horizontal"
         tools:ignore="UselessParent" >
-
-        <ImageButton
-            android:id="@+id/start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_start_button"
-            android:contentDescription="@+id/des_start"
-            android:onClick="start" />
-
-        <ImageButton
-            android:id="@+id/resume"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_resume"
-            android:contentDescription="@+id/des_resume"
-            android:onClick="resume_progress" />
-
-        <ImageButton
-            android:id="@+id/options"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_options_button"
-            android:contentDescription="@+id/des_options"
-            android:onClick="options" />
     </LinearLayout>
 
     <!--
@@ -50,20 +26,6 @@
         android:background="@android:color/black"
         android:padding="5dp"
         android:text="@string/swipe_viewpager" />
-  
-
-    <ImageButton
-        android:id="@+id/imageButton1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/start_image"
-        android:contentDescription="@string/start_questionnaire"
-        android:onClick="start"
-        
-        android:src="@drawable/start_image" />
-        
     -->
 
 
@@ -77,7 +39,6 @@
         android:fontFamily="Comic Sans"
         android:text="@string/settings_text"
 		android:typeface="sans" />
-
     -->
     <!-- ExtendedViewPager is a custom view and must be referred to by its full package name in XML -->
     <!--
@@ -103,7 +64,80 @@
         android:onClick="options"
         android:padding="@dimen/padding_5dp"
 		android:src="@drawable/ic_action_settings" />
-
     -->
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical" >
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2" />
+
+            <ImageButton
+                android:id="@+id/start"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:background="@drawable/ic_start"
+                android:contentDescription="@+id/des_start"
+                android:onClick="start" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/resume"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:background="@drawable/ic_resume"
+                android:contentDescription="@+id/des_resume"
+                android:onClick="resume_progress" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/options"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:background="@drawable/ic_options"
+                android:contentDescription="@+id/des_options"
+                android:onClick="options" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5" />
+    </LinearLayout>
 
 </RelativeLayout>
